@@ -1,0 +1,4 @@
+import {sqliteTable,text,integer,index} from 'drizzle-orm/sqlite-core';
+export const availability=sqliteTable('availability',{id:text('id').primaryKey(),date:text('date').notNull(),start:integer('start').notNull(),end:integer('end').notNull()},t=>[index('idx_availability_date').on(t.date)]);
+export const durations=sqliteTable('durations',{service:text('service').primaryKey(),minutes:integer('minutes').notNull()});
+export const bookings=sqliteTable('bookings',{id:text('id').primaryKey(),service:text('service').notNull(),date:text('date').notNull(),start:integer('start').notNull(),end:integer('end').notNull(),name:text('name').notNull(),email:text('email').notNull(),phone:text('phone').notNull(),status:text('status').notNull().default('pending'),created:text('created').notNull()},t=>[index('idx_bookings_date_status').on(t.date,t.status)]);
