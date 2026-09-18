@@ -15,6 +15,13 @@
       "when": 1789657639120,
       "tag": "0001_gigantic_charles_xavier",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1789716921820,
+      "tag": "0002_useful_professor_monster",
+      "breakpoints": true
     }
   ]
 }
