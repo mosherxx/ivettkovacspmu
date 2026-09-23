@@ -15,7 +15,7 @@ Hungarian-first bilingual website with a persistent appointment database.
 - Prices were transcribed from the supplied price list.
 - Contact information was supplied by the owner.
 - Introductory copy is a draft for approval; no certifications or years of experience are claimed.
-- Hero image is the owner-supplied profile.jpg with CSS feathered edges. The gallery stores uploaded work in R2, with captions and categories in D1. Visitors can filter by treatment and open a photo lightbox. The 15 supplied portfolio images are seeded into the gallery by migration; no test photos are published.
+- The About section uses the owner-supplied profile.jpg with CSS feathered edges. The hero uses the original, labelled illustrative beauty image. The gallery stores uploaded work in R2, with captions and categories in D1. Visitors can filter by treatment and open a photo lightbox. The 15 supplied portfolio images are seeded into the gallery by migration; no test photos are published.
 - Default booking hours are Monday–Friday 09:00–17:00 (approved by the owner). Provisional durations: PMU 180 minutes, consultation 60, correction 90, refresh 120. Existing saved durations are preserved; review these in admin.
 - The .hu domain has not been purchased or connected.
 - Before public launch, confirm the introduction, business/privacy information, and site access settings.

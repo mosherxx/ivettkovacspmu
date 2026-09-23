@@ -103,10 +103,10 @@ textarea{font:inherit;border:1px solid #d4c8bc;background:#fffdfb;color:#48413d;
 .translation-note{background:#f0ebe5;border-left:2px solid #a99480;padding:14px 18px;font-size:14px;color:#766758}.service-name,.contact-details span{overflow-wrap:anywhere}.admin-tabs{height:auto!important}.admin-tabs button{flex-shrink:0}.contact-details span{min-width:0}
 
 /* Fade the portrait into the page without blurring facial details. */
-.hero-visual>img{object-position:center 35%;mask-image:linear-gradient(to right,transparent,#000 5%,#000 95%,transparent),linear-gradient(to bottom,transparent,#000 4%,#000 94%,transparent);mask-composite:intersect;-webkit-mask-composite:source-in;border-radius:22px}
-.hero-visual{margin:20px 0;min-height:615px}.image-note{text-shadow:0 1px 12px #0008}
+.about-portrait img{display:block;width:100%;height:auto;aspect-ratio:1;object-fit:cover;object-position:center;mask-image:linear-gradient(to right,transparent,#000 5%,#000 95%,transparent),linear-gradient(to bottom,transparent,#000 4%,#000 94%,transparent);mask-composite:intersect;-webkit-mask-composite:source-in;border-radius:22px}
+.about-portrait{width:100%;max-width:560px;justify-self:center}.image-note{text-shadow:0 1px 12px #0008}
 .gallery-grid{animation:gallery-reveal .45s ease both}.gallery-card img{transition:transform .55s ease,opacity .35s ease}.full-photo img{animation:photo-reveal .35s ease both}
 @keyframes gallery-reveal{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
 @keyframes photo-reveal{from{opacity:.25}to{opacity:1}}
-@media(max-width:700px){.hero-visual{min-height:420px;margin:0}.hero-visual>img{object-position:center 30%}}
+
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.gallery-grid,.full-photo img{animation:none}.gallery-card img{transition:none}}
