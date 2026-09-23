@@ -2,9 +2,76 @@ export const categories=[{id:'hair',hu:'Szálas szemöldök',en:'Hairstroke brow
 export type Photo={id:string,service:string,caption_hu:string,caption_en:string,published:number};
 export type Faq={id:string,question_hu:string,question_en:string,answer_hu:string,answer_en:string,position:number,published:number};
 export const defaultFaqs:Faq[]=[
-{id:'consultation',question_hu:'Kérhetek konzultációt a kezelés előtt?',question_en:'Can I book a consultation first?',answer_hu:'Igen. Az előzetes konzultáció felrajzolást és tervezést tartalmaz, díja 10 000 Ft. Kezelés foglalásakor ezt levonjuk a kezelés árából.',answer_en:'Yes. The design consultation includes mapping and planning and costs HUF 10,000. This fee is deducted from the treatment price when you book.',position:0,published:1},
-{id:'touchup',question_hu:'Az ár tartalmazza a korrekciót?',question_en:'Is a touch-up included in the price?',answer_hu:'A sminktetoválás ára 12 héten belüli korrekciót tartalmaz. Szükség esetén a második korrekció díja 12 héten belül 25 000 Ft.',answer_en:'PMU prices include a touch-up within 12 weeks. If needed, a second touch-up within 12 weeks costs HUF 25,000.',position:1,published:1},
-{id:'previous',question_hu:'Van már sminktetoválásom. Így is foglalhatok?',question_en:'Can I book if I already have permanent makeup?',answer_hu:'A foglalási űrlapon jelezd a korábbi kezelést. Az időpont véglegesítése előtt egyeztetünk a meglévő tetoválásról és a lehetőségekről.',answer_en:'Please mention your previous treatment in the booking form. Before confirming the appointment, we will discuss your existing makeup and the available options.',position:2,published:1},
-{id:'confirmation',question_hu:'Mikor válik véglegessé a foglalásom?',question_en:'When is my booking confirmed?',answer_hu:'Az űrlap elküldésével időpontkérést rögzítesz. Ivett a megadott elérhetőségen egyeztet veled, és visszaigazolja a foglalást.',answer_en:'Submitting the form creates an appointment request. Ivett will contact you using the details provided and confirm your booking.',position:3,published:1},
-{id:'change',question_hu:'Hogyan módosíthatom vagy mondhatom le az időpontomat?',question_en:'How can I change or cancel my appointment?',answer_hu:'Kérlek, jelezd minél előbb telefonon a +36 30 892 1392 számon vagy az ivettkovacs5@gmail.com email-címen.',answer_en:'Please contact me as soon as possible at +36 30 892 1392 or ivettkovacs5@gmail.com.',position:4,published:1},
+  {
+    "id": "pain",
+    "question_hu": "Fáj a szemöldöktetoválás?",
+    "question_en": "Does eyebrow tattooing hurt?",
+    "answer_hu": "A tetoválás során lidokain krémet használok ezáltal a folyamat fájdalommentes.",
+    "answer_en": "I use lidocaine cream during the tattooing, making the process painless.",
+    "position": 0,
+    "published": 1
+  },
+  {
+    "id": "darkness",
+    "question_hu": "Mennyire lesz sötét közvetlenül utána?",
+    "question_en": "How dark will it be immediately afterwards?",
+    "answer_hu": "Frissen a szemöldök intenzívebbnek és sötétebbnek tűnhet, majd a gyógyulás során fokozatosan világosodik és finomodik.",
+    "answer_en": "The eyebrows may appear more intense and darker when fresh, but will gradually lighten and refine during healing.",
+    "position": 1,
+    "published": 1
+  },
+  {
+    "id": "healing",
+    "question_hu": "Mennyi idő alatt gyógyul meg?",
+    "question_en": "How long will it take to heal?",
+    "answer_hu": "A felszíni hámlás hamarabb lezajlik, de a bőr teljes regenerációja általában több hetet vesz igénybe. A végleges eredményt érdemes csak a teljes gyógyulás után megítélni.",
+    "answer_en": "Surface peeling occurs sooner, but complete regeneration of the skin usually takes several weeks. The final result should only be judged after complete healing.",
+    "position": 2,
+    "published": 1
+  },
+  {
+    "id": "correction",
+    "question_hu": "Kell korrekció?",
+    "question_en": "Do I need correction?",
+    "answer_hu": "Sok esetben igen. A bőr nem mindenhol egyformán tartja meg a pigmentet, ezért a korrekció során lehetőség van az esetleges hiányok finomítására.",
+    "answer_en": "In many cases, yes. The skin does not retain pigment equally everywhere, so it is possible to refine any deficiencies during correction.",
+    "position": 3,
+    "published": 1
+  },
+  {
+    "id": "longevity",
+    "question_hu": "Meddig tartós a sminktetoválás?",
+    "question_en": "How long does a makeup tattoo last?",
+    "answer_hu": "Nem végleges tetoválás: idővel fokozatosan halványodik. A tartósság függ többek között a bőrtípustól, életmódtól és az alkalmazott technikától.",
+    "answer_en": "Not a permanent tattoo: it gradually fades over time. Durability depends, among other things, on skin type, lifestyle and the technique used.",
+    "position": 4,
+    "published": 1
+  },
+  {
+    "id": "techniques",
+    "question_hu": "Mi a különbség a szálas és a púderes technika között?",
+    "question_en": "What is the difference between the fiber and powder technique?",
+    "answer_hu": "A szálas technika egyesével imitált szálakkal ad természetesebb, szálazott hatást. A púderes technika lágy, satírozott, sminkhatású eredményt ad.",
+    "answer_en": "The fiber technique gives a more natural, fibered effect with individually imitated fibers. The powder technique gives a soft, shaded, makeup-like result.",
+    "position": 5,
+    "published": 1
+  },
+  {
+    "id": "aftercare",
+    "question_hu": "Mit kell kerülni a kezelés után?",
+    "question_en": "What should be avoided after the treatment?",
+    "answer_hu": "A gyógyulás alatt fontos kerülni a dörzsölést és a terület piszkálását, valamint a tartós áztatást, szaunát, uszodát és napozást.",
+    "answer_en": "During the healing period, it is important to avoid rubbing and picking at the area, as well as prolonged soaking, sauna, swimming pool and sunbathing.",
+    "position": 6,
+    "published": 1
+  },
+  {
+    "id": "existing-tattoo",
+    "question_hu": "Készíthető-e tetoválás meglévő szemöldöktetoválásra?",
+    "question_en": "Can a tattoo be made over an existing eyebrow tattoo?",
+    "answer_hu": "Kopástól, telítettségtől függ, mindenképp előzetes konzultációt igényel.",
+    "answer_en": "It depends on wear and saturation, and a prior consultation is definitely required.",
+    "position": 7,
+    "published": 1
+  }
 ];
