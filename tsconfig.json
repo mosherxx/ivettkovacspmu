@@ -38,7 +38,9 @@
     "**/*.tsx",
     ".next/types/**/*.ts",
     ".next/dev/types/**/*.ts",
-    "**/*.mts"
+    "**/*.mts",
+    ".docker-build/types/**/*.ts",
+    ".docker-build/dev/types/**/*.ts"
   ],
   "exclude": [
     "node_modules",

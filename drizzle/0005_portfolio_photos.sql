@@ -1,0 +1,16 @@
+INSERT OR IGNORE INTO photos(id,key,service,caption_hu,caption_en,created) VALUES
+('portfolio-lips','bundled/lips.jpg','lips','Ajaktetoválás teljes satír','Full lip shading','2026-09-23T12:00:00.000Z'),
+('portfolio-powder1','bundled/powder1.jpg','powder','Púderes szemöldöktetoválás','Powder brows','2026-09-23T12:00:00.000Z'),
+('portfolio-powder2','bundled/powder2.jpg','powder','Púderes szemöldöktetoválás','Powder brows','2026-09-23T12:00:00.000Z'),
+('portfolio-powder3','bundled/powder3.jpg','powder','Púderes szemöldöktetoválás','Powder brows','2026-09-23T12:00:00.000Z'),
+('portfolio-szalas1','bundled/szalas1.jpg','hair','Szálas szemöldöktetoválás','Hairstroke brows','2026-09-23T12:00:00.000Z'),
+('portfolio-szalas10','bundled/szalas10.jpg','hair','Szálas szemöldöktetoválás','Hairstroke brows','2026-09-23T12:00:00.000Z'),
+('portfolio-szalas2','bundled/szalas2.jpg','hair','Szálas szemöldöktetoválás','Hairstroke brows','2026-09-23T12:00:00.000Z'),
+('portfolio-szalas3','bundled/szalas3.jpg','hair','Szálas szemöldöktetoválás','Hairstroke brows','2026-09-23T12:00:00.000Z'),
+('portfolio-szalas4','bundled/szalas4.jpg','hair','Szálas szemöldöktetoválás','Hairstroke brows','2026-09-23T12:00:00.000Z'),
+('portfolio-szalas5','bundled/szalas5.jpg','hair','Szálas szemöldöktetoválás','Hairstroke brows','2026-09-23T12:00:00.000Z'),
+('portfolio-szalas6','bundled/szalas6.jpg','hair','Szálas szemöldöktetoválás','Hairstroke brows','2026-09-23T12:00:00.000Z'),
+('portfolio-szalas7','bundled/szalas7.jpg','hair','Szálas szemöldöktetoválás','Hairstroke brows','2026-09-23T12:00:00.000Z'),
+('portfolio-szalas8','bundled/szalas8.jpg','hair','Szálas szemöldöktetoválás','Hairstroke brows','2026-09-23T12:00:00.000Z'),
+('portfolio-szalas9','bundled/szalas9.jpg','hair','Szálas szemöldöktetoválás','Hairstroke brows','2026-09-23T12:00:00.000Z'),
+('portfolio-szalas99','bundled/szalas99.jpg','hair','Szálas szemöldöktetoválás','Hairstroke brows','2026-09-23T12:00:00.000Z');

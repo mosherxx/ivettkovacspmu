@@ -46,3 +46,8 @@ next-env.d.ts
 /work/
 *.tsbuildinfo
 !.env.example
+
+# Owner-provided originals are preserved locally; web copies live in public/photos.
+/photos/
+/.docker-build/
+/data/

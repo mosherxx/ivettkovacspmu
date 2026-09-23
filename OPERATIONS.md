@@ -15,7 +15,7 @@ Hungarian-first bilingual website with a persistent appointment database.
 - Prices were transcribed from the supplied price list.
 - Contact information was supplied by the owner.
 - Introductory copy is a draft for approval; no certifications or years of experience are claimed.
-- Hero image is AI-generated illustrative artwork and is visibly labelled. The gallery stores uploaded work in R2, with captions and categories in D1. Visitors can filter by treatment and open a photo lightbox. No test photos are published.
+- Hero image is the owner-supplied profile.jpg with CSS feathered edges. The gallery stores uploaded work in R2, with captions and categories in D1. Visitors can filter by treatment and open a photo lightbox. The 15 supplied portfolio images are seeded into the gallery by migration; no test photos are published.
 - Default booking hours are Monday–Friday 09:00–17:00 (approved by the owner). Provisional durations: PMU 180 minutes, consultation 60, correction 90, refresh 120. Existing saved durations are preserved; review these in admin.
 - The .hu domain has not been purchased or connected.
 - Before public launch, confirm the introduction, business/privacy information, and site access settings.
@@ -57,3 +57,7 @@ Notifications are created atomically with status transitions. The database keeps
 Retries use the same provider idempotency key. After 23 hours from an uncertain first attempt, retry stops for manual provider review rather than risking duplicate mail beyond Resend's idempotency window. A short send lease prevents simultaneous sends and status changes during an active attempt. Emails include appointment details in the client's selected language and never previous-treatment or referral answers.
 
 Latest local checks passed: weekday defaults, closed weekends, concurrent booking rejection, pending holds, confirmation guards, cancellation/rejection release, block precedence, unblock, authorization and notification queue creation. Admin UI verified in the local browser. Live Resend delivery is not tested without credentials.
+
+## Hosting options and supplied photographs
+
+See SELF_HOSTING.md for the GitHub Pages brochure build and full Docker deployment. The accidental `zala` directory rename was verified byte-for-byte against the tracked scripts and restored to `scripts`. Originals remain in the ignored local `photos` directory; published copies are in `public/photos`. Category counts: 11 hair, 3 powder, 1 lips. Gallery/category and lightbox transitions respect reduced-motion preferences.

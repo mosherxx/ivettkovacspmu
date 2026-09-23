@@ -1,0 +1,14 @@
+node_modules
+.git
+.env*
+.next
+.vinext
+.wrangler
+.sites-runtime
+.docker-build
+dist
+out
+data
+photos
+*.tsbuildinfo
+.DS_Store
