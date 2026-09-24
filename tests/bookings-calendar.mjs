@@ -1,0 +1,50 @@
+import {build} from 'esbuild';
+import {mkdtempSync,rmSync,readFileSync} from 'node:fs';
+import {tmpdir} from 'node:os';
+import {join,resolve} from 'node:path';
+import assert from 'node:assert/strict';
+const directory=mkdtempSync(join(tmpdir(),'ivett-booking-'));
+process.env.DATA_DIR=directory;process.env.PUBLIC_ORIGIN='http://localhost:3100';
+try{
+ await build({stdin:{contents:`export * as booking from './app/api/booking/route';export * as admin from './app/api/admin/route';export * as catalog from './app/api/catalog/route';export * as gallery from './app/api/gallery/route';export * as vacation from './app/api/unavailability/route';export * from './lib/calendar';export {env} from './runtime/node-env';export {hashPassword,digest} from './lib/password';`,resolveDir:process.cwd()},bundle:true,platform:'node',format:'esm',outfile:join(directory,'app.mjs'),plugins:[{name:'test-bindings',setup(b){b.onResolve({filter:/^cloudflare:workers$/},()=>({path:resolve('runtime/node-env.ts')}));b.onResolve({filter:/^next\/headers$/},()=>({path:'headers',namespace:'stub'}));b.onLoad({filter:/.*/,namespace:'stub'},()=>({contents:`export async function cookies(){return {get(){return {value:'a'.repeat(64)}}}}`,loader:'js'}))}}]});
+ const {booking,admin,catalog,gallery,vacation,env,hashPassword,digest,calendarDays,calendarMove,bookingGroup}=await import(join(directory,'app.mjs'));
+ await env.DB.prepare('INSERT INTO admin_account(username,password_hash,must_change) VALUES (?,?,0)').bind('admin',await hashPassword('Test-only-password!')).run();
+ await env.DB.prepare('INSERT INTO admin_sessions VALUES (?,?,?,?)').bind(await digest('a'.repeat(64)),'admin',1,Date.now()+3600000).run();
+ const req=(path,data,method='POST')=>new Request(process.env.PUBLIC_ORIGIN+path,{method,headers:{Origin:process.env.PUBLIC_ORIGIN,'Content-Type':'application/json'},body:JSON.stringify(data)});
+ const tomorrow=new Date(Date.now()+14*864e5);while(tomorrow.getUTCDay()!==1)tomorrow.setUTCDate(tomorrow.getUTCDate()+1);const date=tomorrow.toISOString().slice(0,10);
+ const slots=async(service='consult')=>(await (await booking.GET(new Request(process.env.PUBLIC_ORIGIN+`/api/booking?date=${date}&service=${service}`))).json());
+ const services=(await (await catalog.GET()).json()).services,consult=services.find(s=>s.id==='consult');
+ assert.equal(consult.minutes,60);assert((await slots()).slots.includes(540));
+ const save=async(minutes)=>catalog.POST(req('/api/catalog',{action:'service',...consult,descriptionHu:consult.description[0],descriptionEn:consult.description[1],minutes}));
+ assert.equal((await save(120)).status,200);assert.equal((await slots()).duration,120);assert(!(await slots()).slots.includes(930));
+ const data={date,start:540,service:'consult',name:'Local Test',email:'test@example.test',phone:'+36123456789',consent:true,previousTreatment:'no',previousDetails:'',referral:'',quotedPrice:consult.price};
+ const responses=await Promise.all([booking.POST(req('/api/booking',data)),booking.POST(req('/api/booking',{...data,service:'hair',start:570,quotedPrice:80000}))]);
+ assert.deepEqual(responses.map(r=>r.status).sort(),[200,409]);
+ // Use the actual winning interval to verify both boundaries and cross-service collisions.
+ const winner=(await env.DB.prepare('SELECT * FROM bookings').first());
+ assert(!(await slots()).slots.some(n=>n<winner.end&&n+120>winner.start));
+ assert.equal((await booking.POST(req('/api/booking',{...data,start:winner.end}))).status,200);
+ assert.equal((await admin.POST(req('/api/admin',{action:'status',id:winner.id,status:'rejected'}))).status,200);
+ assert((await slots()).slots.includes(540));
+ assert.equal((await admin.POST(req('/api/admin',{action:'block',date_from:date,date_to:date,start:540,end:600,reason:'Private note'}))).status,200);
+ assert(!(await slots()).slots.includes(540));
+ const publicBlocks=await (await vacation.GET()).json();assert.equal(publicBlocks.periods.length,1);assert(!JSON.stringify(publicBlocks).includes('Private note'));
+ const block=await env.DB.prepare('SELECT id FROM time_blocks').first();
+ assert.equal((await admin.POST(req('/api/admin',{action:'unblock',id:block.id}))).status,200);assert((await slots()).slots.includes(540));assert.equal((await (await vacation.GET()).json()).periods.length,0);
+ // Saved reservations retain their original end time after future duration edits.
+ const adjacent=await env.DB.prepare("SELECT * FROM bookings WHERE status='pending'").first();
+ assert.equal((await save(60)).status,200);
+ assert.equal((await env.DB.prepare('SELECT end FROM bookings WHERE id=?').bind(adjacent.id).first()).end,adjacent.end);
+ assert.equal((await admin.POST(req('/api/admin',{action:'status',id:adjacent.id,status:'confirmed'}))).status,200);
+ assert.equal((await admin.POST(req('/api/admin',{action:'block',date_from:date,date_to:date,start:0,end:1440,reason:'Vacation'}))).status,200);
+ assert.equal((await admin.POST(req('/api/admin',{action:'status',id:adjacent.id,status:'cancelled'}))).status,200);
+ assert.equal((await slots()).slots.length,0);
+ assert.equal((await booking.POST(req('/api/booking',data))).status,409);
+ const form=new FormData();form.set('service','lips');form.set('photo',new File([readFileSync('public/photos/lips.jpg')],'work.jpg',{type:'image/jpeg'}));
+ const uploaded=await gallery.POST(new Request(process.env.PUBLIC_ORIGIN+'/api/gallery',{method:'POST',headers:{Origin:process.env.PUBLIC_ORIGIN},body:form}));assert.equal(uploaded.status,200);const id=(await uploaded.json()).id;
+ assert.equal((await env.DB.prepare('SELECT caption_hu FROM photos WHERE id=?').bind(id).first()).caption_hu,'');
+ assert.equal((await gallery.PATCH(req('/api/gallery',{id,service:'lips',caption_hu:'',caption_en:'',published:1},'PATCH'))).status,200);
+ assert.equal((await gallery.PATCH(req('/api/gallery',{id,service:'lips',caption_hu:'',caption_en:'English only',published:1},'PATCH'))).status,200);
+ assert.equal(calendarDays('2026-10-25','workweek').length,5);assert.equal(calendarDays('2026-10-25','week')[0],'2026-10-19');assert.equal(calendarDays('2026-10-25','month').length,42);assert.equal(calendarMove('2026-01-31','month',1),'2026-02-01');assert.equal(bookingGroup('confirmed'),'pending');assert.equal(bookingGroup('rejected'),'cancelled');
+ console.log('PASS: optional/English-only captions, catalogue durations, end boundaries, concurrent cross-service overlap prevention, rejection reopening, unavailable periods, privacy of block notes, and calendar dates/groups.');
+}finally{rmSync(directory,{recursive:true,force:true})}

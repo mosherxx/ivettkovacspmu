@@ -1,5 +1,4 @@
 import {db,isAdmin,sameOrigin,validDate,future} from '@/lib/server';
-import {getServices} from '@/lib/catalog-server';
 import {ensureSchedule,type Hours} from '@/lib/schedule';
 import {emailConfigured,notificationPayload,sendNotification,type Reservation} from '@/lib/email';
 const invalid=()=>Response.json({error:'invalid'},{status:400});
@@ -12,7 +11,6 @@ else if(b.action==='block'){if(!validDate(b.date_from)||!validDate(b.date_to)||b
 else if(b.action==='unblock'&&typeof b.id==='string'){await db().prepare('DELETE FROM time_blocks WHERE id=?').bind(b.id).run();}
 else if(b.action==='availability'&&validDate(b.date)&&interval(b.start,b.end)){await db().prepare('INSERT INTO availability(id,date,start,end) VALUES (?,?,?,?)').bind(crypto.randomUUID(),b.date,b.start,b.end).run();}
 else if(b.action==='remove'&&typeof b.id==='string'){await db().prepare('DELETE FROM availability WHERE id=?').bind(b.id).run();}
-else if(b.action==='duration'){const services=await getServices();if(!services.some(s=>s.id===b.service)||!Number.isInteger(b.minutes)||b.minutes<30||b.minutes>480||b.minutes%30!==0)return invalid();await db().prepare('INSERT INTO durations(service,minutes) VALUES (?,?) ON CONFLICT(service) DO UPDATE SET minutes=excluded.minutes').bind(b.service,b.minutes).run();}
 else if(b.action==='retry_email'&&typeof b.id==='string'){return Response.json({ok:true,email:await sendNotification(b.id)});}
 else if(b.action==='status'&&typeof b.id==='string'){
 const booking=await db().prepare('SELECT * FROM bookings WHERE id=?').bind(b.id).first<Reservation>();
