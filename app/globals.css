@@ -124,3 +124,5 @@ textarea{font:inherit;border:1px solid #d4c8bc;background:#fffdfb;color:#48413d;
 .hero-gallery-empty{display:grid;place-items:center;min-height:inherit;height:100%}
 @media(max-width:700px){.hero-gallery-footer{left:12px;right:12px;bottom:12px;padding:10px;flex-wrap:wrap}}
 @media(prefers-reduced-motion:reduce){.hero-visual .hero-slide{transition:none}}
+
+.legal-links{display:flex;flex-wrap:wrap;gap:12px 22px;font-size:12px}.booking-legal{font-size:13px;line-height:1.6}.booking-legal a{text-decoration:underline;text-underline-offset:3px}
