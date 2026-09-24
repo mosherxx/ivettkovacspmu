@@ -21,7 +21,7 @@ For a project URL such as `https://owner.github.io/ivett/`, build with `PAGES_BA
 
 The static build uses `lib/services.ts`, `lib/catalog.ts`, `lib/content.ts`, `lib/portfolio.ts` and `public/photos`. Changes made through Docker or Sites admin are **not automatically copied into GitHub Pages**. Update the source content and rerun the workflow. Pages has no admin, reservations, API server, email credentials or client booking records.
 
-For a future `.hu` address, register the domain, configure it in GitHub Pages settings and point DNS to GitHub following their custom-domain instructions. No domain purchase or GitHub repository creation is included in these files.
+The purchased domains are `www.ivettkovacspmu.hu` (primary) and `www.ivettkovacspmu.com` (redirect). See DOMAIN_SETUP.md for the DNS and Pages configuration.
 
 ## Docker: full website
 

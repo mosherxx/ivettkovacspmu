@@ -110,3 +110,17 @@ textarea{font:inherit;border:1px solid #d4c8bc;background:#fffdfb;color:#48413d;
 @keyframes photo-reveal{from{opacity:.25}to{opacity:1}}
 
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.gallery-grid,.full-photo img{animation:none}.gallery-card img{transition:none}}
+
+/* Work photographs gently crossfade in the opening gallery. */
+.hero-gallery{background:#e9e1db}
+.hero-visual .hero-slide{opacity:0;transition:opacity 900ms ease-in-out;object-fit:contain;background:#e9e1db}
+.hero-visual .hero-slide.is-active{opacity:1}
+.hero-gallery .image-frame{pointer-events:none}
+.hero-gallery-footer{position:absolute;z-index:2;left:24px;right:24px;bottom:24px;padding:12px 16px;background:rgba(255,252,248,.94);color:#514a45;display:flex;align-items:center;justify-content:space-between;gap:12px;font-size:13px}
+.hero-gallery-controls{display:flex;align-items:center;gap:4px;white-space:nowrap}
+.hero-gallery-controls button{display:grid;place-items:center;width:34px;height:36px;border:0;background:transparent;color:inherit;cursor:pointer}
+.hero-gallery-controls button:hover{background:#e9e1db}
+.hero-gallery-controls button:focus-visible{outline:2px solid #514a45;outline-offset:2px}
+.hero-gallery-empty{display:grid;place-items:center;min-height:inherit;height:100%}
+@media(max-width:700px){.hero-gallery-footer{left:12px;right:12px;bottom:12px;padding:10px;flex-wrap:wrap}}
+@media(prefers-reduced-motion:reduce){.hero-visual .hero-slide{transition:none}}
