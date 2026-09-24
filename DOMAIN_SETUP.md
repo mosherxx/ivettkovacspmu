@@ -1,5 +1,7 @@
 # Domains and GitHub Pages
 
+For the full booking/admin service on your Raspberry Pi, follow [RASPBERRY_PI.md](RASPBERRY_PI.md) instead. The records below are only for the static GitHub Pages alternative; do not combine them with the Pi tunnel configuration.
+
 Repository: https://github.com/mosherxx/ivettkovacspmu
 Primary address: https://www.ivettkovacspmu.hu
 Secondary address: https://www.ivettkovacspmu.com (redirect to the primary address).

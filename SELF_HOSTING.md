@@ -1,5 +1,7 @@
 # Hosting Ivett Kovacs PMU
 
+For the full service on Raspberry Pi, custom domains, HTTPS and email setup, see [RASPBERRY_PI.md](RASPBERRY_PI.md).
+
 Two builds share the same design, photos, Hungarian/English content and service list.
 
 | | GitHub Pages | Docker |

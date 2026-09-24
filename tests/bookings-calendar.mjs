@@ -6,8 +6,8 @@ import assert from 'node:assert/strict';
 const directory=mkdtempSync(join(tmpdir(),'ivett-booking-'));
 process.env.DATA_DIR=directory;process.env.PUBLIC_ORIGIN='http://localhost:3100';
 try{
- await build({stdin:{contents:`export * as booking from './app/api/booking/route';export * as admin from './app/api/admin/route';export * as catalog from './app/api/catalog/route';export * as gallery from './app/api/gallery/route';export * as vacation from './app/api/unavailability/route';export * from './lib/calendar';export {env} from './runtime/node-env';export {hashPassword,digest} from './lib/password';`,resolveDir:process.cwd()},bundle:true,platform:'node',format:'esm',outfile:join(directory,'app.mjs'),plugins:[{name:'test-bindings',setup(b){b.onResolve({filter:/^cloudflare:workers$/},()=>({path:resolve('runtime/node-env.ts')}));b.onResolve({filter:/^next\/headers$/},()=>({path:'headers',namespace:'stub'}));b.onLoad({filter:/.*/,namespace:'stub'},()=>({contents:`export async function cookies(){return {get(){return {value:'a'.repeat(64)}}}}`,loader:'js'}))}}]});
- const {booking,admin,catalog,gallery,vacation,env,hashPassword,digest,calendarDays,calendarMove,bookingGroup}=await import(join(directory,'app.mjs'));
+ await build({stdin:{contents:`export * as booking from './app/api/booking/route';export * as admin from './app/api/admin/route';export * as catalog from './app/api/catalog/route';export * as gallery from './app/api/gallery/route';export * as publicCalendar from './app/api/calendar/route';export * as profile from './app/api/profile-photo/route';export * as vacation from './app/api/unavailability/route';export * from './lib/calendar';export {env} from './runtime/node-env';export {hashPassword,digest} from './lib/password';`,resolveDir:process.cwd()},bundle:true,platform:'node',format:'esm',outfile:join(directory,'app.mjs'),plugins:[{name:'test-bindings',setup(b){b.onResolve({filter:/^cloudflare:workers$/},()=>({path:resolve('runtime/node-env.ts')}));b.onResolve({filter:/^next\/headers$/},()=>({path:'headers',namespace:'stub'}));b.onLoad({filter:/.*/,namespace:'stub'},()=>({contents:`export async function cookies(){return {get(){return {value:'a'.repeat(64)}}}}`,loader:'js'}))}}]});
+ const {booking,admin,catalog,gallery,vacation,publicCalendar,profile,env,hashPassword,digest,calendarDays,calendarMove,bookingGroup}=await import(join(directory,'app.mjs'));
  await env.DB.prepare('INSERT INTO admin_account(username,password_hash,must_change) VALUES (?,?,0)').bind('admin',await hashPassword('Test-only-password!')).run();
  await env.DB.prepare('INSERT INTO admin_sessions VALUES (?,?,?,?)').bind(await digest('a'.repeat(64)),'admin',1,Date.now()+3600000).run();
  const req=(path,data,method='POST')=>new Request(process.env.PUBLIC_ORIGIN+path,{method,headers:{Origin:process.env.PUBLIC_ORIGIN,'Content-Type':'application/json'},body:JSON.stringify(data)});
@@ -40,11 +40,26 @@ try{
  assert.equal((await admin.POST(req('/api/admin',{action:'status',id:adjacent.id,status:'cancelled'}))).status,200);
  assert.equal((await slots()).slots.length,0);
  assert.equal((await booking.POST(req('/api/booking',data))).status,409);
+ const calendarResult=await (await publicCalendar.GET(new Request(process.env.PUBLIC_ORIGIN+`/api/calendar?date=${date}&service=consult`))).json();
+ assert.equal(calendarResult.days.length,7);assert.equal(calendarResult.days[0].slots.length,0);assert(calendarResult.days[0].busy.some(b=>b.start===0&&b.end===1440));
+ assert(!/Local Test|example.test|Private note|Vacation|name|email|phone|booking_id/.test(JSON.stringify(calendarResult)));
  const form=new FormData();form.set('service','lips');form.set('photo',new File([readFileSync('public/photos/lips.jpg')],'work.jpg',{type:'image/jpeg'}));
  const uploaded=await gallery.POST(new Request(process.env.PUBLIC_ORIGIN+'/api/gallery',{method:'POST',headers:{Origin:process.env.PUBLIC_ORIGIN},body:form}));assert.equal(uploaded.status,200);const id=(await uploaded.json()).id;
  assert.equal((await env.DB.prepare('SELECT caption_hu FROM photos WHERE id=?').bind(id).first()).caption_hu,'');
  assert.equal((await gallery.PATCH(req('/api/gallery',{id,service:'lips',caption_hu:'',caption_en:'',published:1},'PATCH'))).status,200);
  assert.equal((await gallery.PATCH(req('/api/gallery',{id,service:'lips',caption_hu:'',caption_en:'English only',published:1},'PATCH'))).status,200);
+ const list=async()=> (await (await gallery.GET(new Request(process.env.PUBLIC_ORIGIN+'/api/gallery?admin=1'))).json()).photos;
+ const before=await list(),ids=before.map(p=>p.id).reverse();
+ assert.equal((await gallery.PUT(req('/api/gallery',{ids},'PUT'))).status,200);
+ assert.deepEqual((await list()).map(p=>p.id),ids);
+ assert.equal((await gallery.PUT(req('/api/gallery',{ids:[ids[0],ids[0]]},'PUT'))).status,400);
+ assert.equal((await gallery.PUT(req('/api/gallery',{ids:ids.slice(1)},'PUT'))).status,409);
+ const publicPhotos=(await (await gallery.GET(new Request(process.env.PUBLIC_ORIGIN+'/api/gallery'))).json()).photos;
+ assert.deepEqual(publicPhotos.map(p=>p.id),ids);
+ const portrait=new FormData();portrait.set('photo',new File([readFileSync('public/photos/profile.jpg')],'profile.jpg',{type:'image/jpeg'}));
+ assert.equal((await profile.POST(new Request(process.env.PUBLIC_ORIGIN+'/api/profile-photo',{method:'POST',headers:{Origin:process.env.PUBLIC_ORIGIN},body:portrait}))).status,200);
+ const image=await profile.GET(new Request(process.env.PUBLIC_ORIGIN+'/api/profile-photo'));assert.equal(image.status,200);assert.equal(image.headers.get('Content-Type'),'image/jpeg');assert.equal((await image.arrayBuffer()).byteLength,readFileSync('public/photos/profile.jpg').length);
+ assert.equal((await profile.POST(new Request(process.env.PUBLIC_ORIGIN+'/api/profile-photo',{method:'POST',headers:{Origin:'https://bad.example'},body:portrait}))).status,403);
  assert.equal(calendarDays('2026-10-25','workweek').length,5);assert.equal(calendarDays('2026-10-25','week')[0],'2026-10-19');assert.equal(calendarDays('2026-10-25','month').length,42);assert.equal(calendarMove('2026-01-31','month',1),'2026-02-01');assert.equal(bookingGroup('confirmed'),'pending');assert.equal(bookingGroup('rejected'),'cancelled');
- console.log('PASS: optional/English-only captions, catalogue durations, end boundaries, concurrent cross-service overlap prevention, rejection reopening, unavailable periods, privacy of block notes, and calendar dates/groups.');
+ console.log('PASS: gallery order persistence/validation, profile upload, anonymous public calendar, optional/English-only captions, catalogue durations, end boundaries, concurrent cross-service overlap prevention, rejection reopening, unavailable periods, privacy of block notes, and calendar dates/groups.');
 }finally{rmSync(directory,{recursive:true,force:true})}
