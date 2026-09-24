@@ -12,3 +12,6 @@ data
 photos
 *.tsbuildinfo
 .DS_Store
+
+# Private database/upload backups
+backups/

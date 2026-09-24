@@ -51,3 +51,6 @@ next-env.d.ts
 /photos/
 /.docker-build/
 /data/
+
+# Private database/upload backups
+backups/
