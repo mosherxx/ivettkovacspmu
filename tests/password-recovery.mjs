@@ -8,8 +8,8 @@ process.env.DATA_DIR=directory;
 process.env.PUBLIC_ORIGIN='http://localhost:3100';
 process.env.ADMIN_RECOVERY_EMAIL='owner@example.test';
 try{
- await build({stdin:{contents:`export {POST} from './app/api/auth/recovery/route';export {env} from './runtime/node-env';export {hashPassword,verifyPassword,digest} from './lib/password';`,resolveDir:process.cwd()},bundle:true,platform:'node',format:'esm',outfile:join(directory,'recovery.mjs'),plugins:[{name:'test-bindings',setup(b){b.onResolve({filter:/^cloudflare:workers$/},()=>({path:resolve('runtime/node-env.ts')}));b.onResolve({filter:/^next\/headers$/},()=>({path:'headers',namespace:'stub'}));b.onLoad({filter:/.*/,namespace:'stub'},()=>({contents:'export async function cookies(){return {get(){return undefined}}}',loader:'js'}))}}]});
- const {POST,env,hashPassword,verifyPassword,digest}=await import(join(directory,'recovery.mjs'));
+ await build({stdin:{contents:`export {applyOperatorPasswordReset} from './lib/operator-password-reset';export {POST} from './app/api/auth/recovery/route';export {env} from './runtime/node-env';export {hashPassword,verifyPassword,digest} from './lib/password';`,resolveDir:process.cwd()},bundle:true,platform:'node',format:'esm',outfile:join(directory,'recovery.mjs'),plugins:[{name:'test-bindings',setup(b){b.onResolve({filter:/^cloudflare:workers$/},()=>({path:resolve('runtime/node-env.ts')}));b.onResolve({filter:/^next\/headers$/},()=>({path:'headers',namespace:'stub'}));b.onLoad({filter:/.*/,namespace:'stub'},()=>({contents:'export async function cookies(){return {get(){return undefined}}}',loader:'js'}))}}]});
+ const {applyOperatorPasswordReset,POST,env,hashPassword,verifyPassword,digest}=await import(join(directory,'recovery.mjs'));
  process.env.ADMIN_INITIAL_HASH=await hashPassword('Old-test-password!');
  const request=(data,origin=process.env.PUBLIC_ORIGIN)=>POST(new Request(process.env.PUBLIC_ORIGIN+'/api/auth/recovery',{method:'POST',headers:{origin,'Content-Type':'application/json'},body:JSON.stringify(data)}));
  assert.equal((await request({action:'request'},'https://attacker.test')).status,403);
@@ -38,5 +38,19 @@ try{
  globalThis.fetch=async()=>new Response('',{status:500});
  assert.equal((await request({action:'request'})).status,503);
  assert.equal((await env.DB.prepare('SELECT reset_hash FROM admin_account').first()).reset_hash,null);
+ const previousVersion=(await env.DB.prepare('SELECT version FROM admin_account').first()).version;
+ process.env.ADMIN_PASSWORD_RESET=JSON.stringify({id:crypto.randomUUID(),hash:await hashPassword('Operator-test-password!')});
+ await Promise.all([applyOperatorPasswordReset(),applyOperatorPasswordReset()]);
+ row=await env.DB.prepare('SELECT * FROM admin_account').first();
+ assert.equal(row.version,previousVersion+1);assert.equal(row.must_change,0);assert.equal(row.failures,0);assert.equal(row.locked_until,0);assert.equal(row.reset_hash,null);
+ assert(await verifyPassword('Operator-test-password!',row.password_hash));
+ assert.equal(await env.DB.prepare('SELECT * FROM admin_sessions').first(),null);
+ const changedHash=await hashPassword('Later-test-password!');
+ await env.DB.prepare('UPDATE admin_account SET password_hash=?').bind(changedHash).run();
+ await applyOperatorPasswordReset();
+ assert.equal((await env.DB.prepare('SELECT password_hash FROM admin_account').first()).password_hash,changedHash);
+ delete process.env.ADMIN_PASSWORD_RESET;
+ await applyOperatorPasswordReset();
+ console.log('Operator reset: transactional single use, session deletion, lockout clearance, no replay after subsequent password change passed.');
  console.log('Password recovery: origin checks, missing config, trusted recipient, throttling, hashing, expiry, replay/concurrency, session invalidation and failed delivery passed. No real emails sent.');
 }finally{rmSync(directory,{recursive:true,force:true})}

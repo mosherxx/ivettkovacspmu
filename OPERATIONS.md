@@ -61,3 +61,7 @@ Latest local checks passed: weekday defaults, closed weekends, concurrent bookin
 ## Hosting options and supplied photographs
 
 See SELF_HOSTING.md for the GitHub Pages brochure build and full Docker deployment. The accidental `zala` directory rename was verified byte-for-byte against the tracked scripts and restored to `scripts`. Originals remain in the ignored local `photos` directory; published copies are in `public/photos`. Category counts: 11 hair, 3 powder, 1 lips. Gallery/category and lightbox transitions respect reduced-motion preferences.
+
+### Operator-assisted password recovery
+
+If email delivery is unavailable, an authorized deployment operator can set the secret `ADMIN_PASSWORD_RESET` to a JSON object containing a fresh UUID `id` and a PBKDF2 `hash` in the existing application format. Never commit the password, hash, or secret value. Deploy, then visit the admin page or sign in to apply it. The reset is applied transactionally once per ID, clears lockout and reset links, and invalidates existing sessions. After verifying sign-in, remove the secret and redeploy the same saved version. Reusing an applied ID does not change the password again.
