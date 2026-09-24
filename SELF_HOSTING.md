@@ -63,3 +63,9 @@ python3 tests/docker-smoke.py http://localhost:3100
 ```
 
 This test changes the disposable admin password and creates test data. Never run it against your working studio database.
+
+## Admin password recovery
+
+Set `ADMIN_RECOVERY_EMAIL` to the owner's trusted inbox (Ivett's supplied address is ivettkovacs5@gmail.com), `PUBLIC_ORIGIN` to the exact HTTPS website origin, and configure `RESEND_API_KEY` and `RESEND_FROM`. The login page's Forgot your password link emails that fixed recipient; visitors cannot select the recipient. Public contact edits do not change the recovery address. Keep these values in environment settings, never Git.
+
+Reset links expire after 30 minutes, are single-use and are stored only as hashes. Requests are limited to one per five minutes. A successful reset invalidates all existing admin sessions. Tokens are carried in URL fragments and removed from the address bar when the reset form opens. Without email configuration, recovery displays an explicit unavailable message.
