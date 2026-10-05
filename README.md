@@ -1,6 +1,16 @@
-# vinext-starter
+# Ivett Kovacs PMU reservation service
 
-A clean full-stack starter running on [vinext](https://github.com/cloudflare/vinext), with optional Cloudflare D1 and Drizzle support.
+A bilingual permanent-makeup website with appointment requests, availability management, an admin interface, gallery and content editing, durable email notifications, and password recovery. The production service runs in Docker on a Windows laptop and is published through Cloudflare Tunnel.
+
+## Production deployment
+
+- [Technical deployment guide](DEPLOYMENT_TECHNICAL.md): architecture, deployment sequence, updates, security boundaries, recovery, and troubleshooting.
+- [Windows hosting checklist](WINDOWS_HOSTING.md): concise setup and routine operation for the production laptop.
+- [Self-hosting guide](SELF_HOSTING.md): application modes, persistent data, and validation.
+
+Production credentials, reservation data, uploaded client content, and backups are deliberately excluded from this repository.
+
+The application also retains its [vinext](https://github.com/cloudflare/vinext) and Cloudflare Sites-compatible build path for alternative hosting.
 
 ## Prerequisites
 
