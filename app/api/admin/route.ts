@@ -14,11 +14,13 @@ else if(b.action==='remove'&&typeof b.id==='string'){await db().prepare('DELETE 
 else if(b.action==='retry_email'&&typeof b.id==='string'){return Response.json({ok:true,email:await sendNotification(b.id)});}
 else if(b.action==='status'&&typeof b.id==='string'){
 const booking=await db().prepare('SELECT * FROM bookings WHERE id=?').bind(b.id).first<Reservation>();
-const transitions:Record<string,string[]>={pending:['confirmed','rejected','cancelled'],confirmed:['cancelled','completed']};
+const transitions:Record<string,string[]>={pending:['confirmed','rejected'],confirmed:['cancelled','completed']};
 if(!booking||!transitions[booking.status]?.includes(b.status))return conflict();
 if(b.status==='confirmed'&&!future(booking.date,booking.start))return conflict();
-const event=crypto.randomUUID(),now=Date.now(),notify=b.status!=='completed';const payload=notify?JSON.stringify(await notificationPayload(booking,b.status)):'';
-const statements=[db().prepare(`UPDATE bookings SET status=?,status_event=? WHERE id=? AND status=? AND NOT EXISTS (SELECT 1 FROM email_outbox WHERE booking_id=? AND state='sending' AND locked_until>?) AND (?!='confirmed' OR NOT EXISTS (SELECT 1 FROM time_blocks WHERE date_from<=bookings.date AND date_to>=bookings.date AND start<bookings.end AND end>bookings.start))`).bind(b.status,event,b.id,booking.status,b.id,now,b.status)];
+const rejectionReason=b.status==='rejected'&&typeof b.reason==='string'?b.reason.trim():'';
+if(b.status==='rejected'&&(!rejectionReason||rejectionReason.length>500))return invalid();
+const event=crypto.randomUUID(),now=Date.now(),notify=b.status!=='completed';const payload=notify?JSON.stringify(await notificationPayload({...booking,rejection_reason:rejectionReason},b.status)):'';
+const statements=[db().prepare(`UPDATE bookings SET status=?,status_event=?,rejection_reason=? WHERE id=? AND status=? AND NOT EXISTS (SELECT 1 FROM email_outbox WHERE booking_id=? AND state='sending' AND locked_until>?) AND (?!='confirmed' OR NOT EXISTS (SELECT 1 FROM time_blocks WHERE date_from<=bookings.date AND date_to>=bookings.date AND start<bookings.end AND end>bookings.start))`).bind(b.status,event,rejectionReason,b.id,booking.status,b.id,now,b.status)];
 if(notify)statements.push(db().prepare("INSERT INTO email_outbox(id,booking_id,kind,payload,state,created) SELECT ?,id,?,?, 'queued',? FROM bookings WHERE id=? AND status_event=?").bind(event,b.status,payload,new Date().toISOString(),b.id,event));
 statements.push(db().prepare("UPDATE email_outbox SET state='superseded',locked_until=0 WHERE booking_id=? AND id!=? AND state IN ('queued','failed','sending') AND EXISTS(SELECT 1 FROM bookings WHERE id=? AND status_event=?)").bind(b.id,event,b.id,event));
 const result=await db().batch(statements);if(!result[0].meta.changes)return conflict();return Response.json({ok:true,email:notify?await sendNotification(event):null});

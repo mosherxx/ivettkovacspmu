@@ -2,14 +2,14 @@ import {reservationEmail} from './reservation-email';
 import {env} from 'cloudflare:workers';
 import {db} from '@/lib/server';
 import {getContact,getServices} from '@/lib/catalog-server';
-export type Reservation={id:string,service:string,date:string,start:number,end:number,name:string,email:string,status:string,language:string,service_name:string,booked_price:number|null,status_event:string};
+export type Reservation={id:string,service:string,date:string,start:number,end:number,name:string,email:string,status:string,language:string,service_name:string,booked_price:number|null,status_event:string,rejection_reason?:string};
 type Outbox={id:string,booking_id:string,kind:string,payload:string,state:string,first_attempt:number|null};
 export function emailConfigured(){const e=env as unknown as {RESEND_API_KEY?:string,RESEND_FROM?:string};return !!e.RESEND_API_KEY&&!!e.RESEND_FROM;}
 export async function notificationPayload(b:Reservation,kind:string){
  const [contact,services]=await Promise.all([getContact(),getServices()]);
  const service=services.find(s=>s.id===b.service);
  const name=b.language==='en'?(service?.en||b.service_name||service?.hu||b.service):(b.service_name||service?.hu||b.service);
- return {to:[b.email],reply_to:contact.email,...reservationEmail({id:b.id,name:b.name,date:b.date,start:b.start,end:b.end,price:b.booked_price,service:name,language:b.language},kind,contact)};
+ return {to:[b.email],reply_to:contact.email,...reservationEmail({id:b.id,name:b.name,date:b.date,start:b.start,end:b.end,price:b.booked_price,service:name,language:b.language,rejectionReason:b.rejection_reason},kind,contact)};
 }
 export async function sendNotification(id:string){if(!emailConfigured())return 'not_configured';const now=Date.now();let job=await db().prepare('SELECT * FROM email_outbox WHERE id=?').bind(id).first<Outbox>();if(!job)return 'missing';if(['accepted','superseded','manual_review'].includes(job.state))return job.state;
 const current=await db().prepare('SELECT status,status_event FROM bookings WHERE id=?').bind(job.booking_id).first<{status:string,status_event:string}>();if(!current||current.status_event!==id||current.status!==job.kind){await db().prepare("UPDATE email_outbox SET state='superseded' WHERE id=? AND state!='accepted'").bind(id).run();return 'superseded'}
