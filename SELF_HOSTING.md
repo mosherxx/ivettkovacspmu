@@ -12,18 +12,18 @@ Two builds share the same design, photos, Hungarian/English content and service 
 | Admin editing and uploads | No | Yes |
 | Stored data | Content committed in the repository | SQLite and uploaded files in a Docker volume |
 
-## GitHub Pages
+## GitHub repository and validation
 
-1. Push this project into your GitHub repository. Keep `.env`, database files and local test data out of Git; the supplied ignore files already exclude them.
-2. In repository Settings → Pages, choose **GitHub Actions** as the publishing source.
-3. Run **Publish brochure to GitHub Pages** from Actions. The workflow calculates the repository base path, builds and publishes `out/pages`.
+Push this project into the private GitHub repository. Keep `.env`, database files and local test data out of Git; the supplied ignore files already exclude them. The **Validate application** workflow runs on pushes and pull requests. It installs locked dependencies, verifies every reservation email type in Hungarian and English, and builds the production application. It does not publish or replace the live Docker service.
+
+### Optional static brochure
 
 Local build: `npm ci` then `npm run build:pages`.
-For a project URL such as `https://owner.github.io/ivett/`, build with `PAGES_BASE_PATH=/ivett/ npm run build:pages`. Use `/` for a custom domain or an account-level Pages site. The workflow handles this automatically from the Pages configuration.
+For a project URL such as `https://owner.github.io/ivett/`, build with `PAGES_BASE_PATH=/ivett/ npm run build:pages`. Use `/` for a custom domain or an account-level Pages site. Publishing this brochure requires separately enabling and configuring GitHub Pages; it is not part of the production setup.
 
-The static build uses `lib/services.ts`, `lib/catalog.ts`, `lib/content.ts`, `lib/portfolio.ts` and `public/photos`. Changes made through Docker or Sites admin are **not automatically copied into GitHub Pages**. Update the source content and rerun the workflow. Pages has no admin, reservations, API server, email credentials or client booking records.
+The static build uses `lib/services.ts`, `lib/catalog.ts`, `lib/content.ts`, `lib/portfolio.ts` and `public/photos`. Changes made through Docker or Sites admin are **not automatically copied into a static build**. Update the source content, rebuild, and republish it manually. A static brochure has no admin, reservations, API server, email credentials or client booking records.
 
-The purchased domains are `www.ivettkovacspmu.hu` (primary) and `www.ivettkovacspmu.com` (redirect). See DOMAIN_SETUP.md for the DNS and Pages configuration.
+The purchased domains are `www.ivettkovacspmu.hu` (primary) and `www.ivettkovacspmu.com` (redirect). The live `.hu` website uses Docker and Cloudflare Tunnel.
 
 ## Docker: full website
 

@@ -1,12 +1,12 @@
-# Domains and GitHub Pages
+# Archived GitHub Pages alternative
 
-For the full booking/admin service on your Raspberry Pi, follow [RASPBERRY_PI.md](RASPBERRY_PI.md) instead. The records below are only for the static GitHub Pages alternative; do not combine them with the Pi tunnel configuration.
+The live booking/admin service uses Docker on the Windows laptop with Cloudflare Tunnel. The records below describe an inactive static GitHub Pages alternative; do not apply them to the production Cloudflare configuration.
 
 Repository: https://github.com/mosherxx/ivettkovacspmu
 Primary address: https://www.ivettkovacspmu.hu
 Secondary address: https://www.ivettkovacspmu.com (redirect to the primary address).
 
-In the repository's Settings → Pages, select GitHub Actions as the source. Set the custom domain to `www.ivettkovacspmu.hu` before pointing DNS at GitHub. The supplied workflow publishes the brochure on pushes to main and can also be run manually. Enable Enforce HTTPS once the certificate is ready.
+GitHub Pages is not currently enabled and the repository workflow validates the application without publishing it. To adopt this static alternative later, add a dedicated Pages workflow, select GitHub Actions as the Pages source, and configure the custom domain before changing DNS.
 
 At the DNS provider for ivettkovacspmu.hu, configure:
 

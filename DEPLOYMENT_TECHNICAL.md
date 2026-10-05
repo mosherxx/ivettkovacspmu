@@ -202,4 +202,4 @@ Restore a backup into a new disposable Docker volume first. Confirm that SQLite 
 
 - [WINDOWS_HOSTING.md](WINDOWS_HOSTING.md) contains the concise operator checklist for this laptop.
 - [SELF_HOSTING.md](SELF_HOSTING.md) describes the application hosting modes and data model at a higher level.
-- [DOMAIN_SETUP.md](DOMAIN_SETUP.md) documents the separate static GitHub Pages alternative; do not combine its old website DNS records with the tunnel route.
+- [DOMAIN_SETUP.md](DOMAIN_SETUP.md) archives the inactive static GitHub Pages alternative; do not combine its old website DNS records with the tunnel route.
