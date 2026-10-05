@@ -56,6 +56,8 @@ Notifications are created atomically with status transitions. The database keeps
 
 A pending request can be confirmed or rejected. Rejection requires an operator-entered reason, releases the requested time, stores the reason with the booking, and includes it in the styled rejection email. A confirmed appointment can instead be cancelled or marked completed. Cancellation means an appointment that was previously accepted will no longer take place; rejection means the original request was never accepted.
 
+The language selected by the client when submitting the reservation is stored on that booking. Its request receipt, confirmation, rejection, cancellation, and any retry always use that original language; the admin interface language does not override it. The operator-entered rejection reason is preserved exactly, so write that free-text reason in the client's stored language. Admin password recovery is separate because it is not associated with a client reservation.
+
 Retries use the same provider idempotency key. After 23 hours from an uncertain first attempt, retry stops for manual provider review rather than risking duplicate mail beyond Resend's idempotency window. A short send lease prevents simultaneous sends and status changes during an active attempt. Emails include appointment details in the client's selected language and never previous-treatment or referral answers.
 
 Latest local checks passed: weekday defaults, closed weekends, concurrent booking rejection, pending holds, confirmation guards, cancellation/rejection release, block precedence, unblock, authorization and notification queue creation. Admin UI verified in the local browser. Live Resend delivery is not tested without credentials.

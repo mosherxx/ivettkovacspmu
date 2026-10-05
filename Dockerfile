@@ -3,6 +3,7 @@ WORKDIR /app
 COPY package.json package-lock.json .npmrc ./
 RUN npm ci
 COPY . .
+RUN node tests/reservation-email.mjs
 RUN npm run build:docker
 
 FROM public.ecr.aws/docker/library/node:24-bookworm-slim AS runner
