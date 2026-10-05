@@ -33,7 +33,7 @@ Install Docker Engine with Compose, then run from the project directory:
 docker compose up -d --build
 ```
 
-Open `http://localhost:3000`. Admin is at `/admin`; initial login is **admin / admin**, with mandatory password change. Existing passwords survive rebuilds. The container runs as an unprivileged user.
+Open `http://127.0.0.1:3000`. Admin is at `/admin`; initial login is **admin / admin**, with mandatory password change. Existing passwords survive rebuilds. The container runs as an unprivileged user. For this Windows laptop's startup, backups, and Cloudflare Tunnel steps, see [WINDOWS_HOSTING.md](WINDOWS_HOSTING.md).
 
 The database, reservation history, edited services/FAQ/contact details and uploaded images live in the `ivett-data` named volume, mounted at `/data`. Migrations run transactionally on first database use, and are tracked so restarts do not reapply them. Run a single application instance with this volume. Do not use `docker compose down -v` unless you intend to erase the data.
 
@@ -56,7 +56,7 @@ Stop the web container before taking a consistent backup of the entire `ivett-da
 
 ### Validation
 
-The Pages build was checked under `/ivett/`. The production Next.js standalone build passed, and a disposable local instance was checked for automatic migrations, all supplied photos, FAQ, password rotation, authorization, origin protection, uploads/hiding, overlapping reservations, confirmation, cancellation, and persistence after process restart. Docker was not installed on the development computer, so the actual image/Compose launch still needs verification on a Docker host. Live email delivery still requires Resend configuration.
+The Pages build was checked under `/ivett/`. The production Next.js Docker image and Compose launch passed on this Windows laptop. A disposable container was checked for automatic migrations, all supplied photos, FAQ, password rotation, authorization, origin protection, uploads/hiding, overlapping reservations, a queued request receipt, confirmation, cancellation, and availability after cancellation. Live email delivery still requires Resend configuration.
 
 To repeat the API check against a **new disposable local instance only**:
 

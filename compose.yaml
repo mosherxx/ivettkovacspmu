@@ -6,7 +6,7 @@ services:
     volumes:
       - ivett-data:/data
     environment:
-      PUBLIC_ORIGIN: ${PUBLIC_ORIGIN:-http://localhost:3000}
+      PUBLIC_ORIGIN: ${PUBLIC_ORIGIN:-http://127.0.0.1:3000}
       RESEND_API_KEY: ${RESEND_API_KEY:-}
       ADMIN_RECOVERY_EMAIL: ${ADMIN_RECOVERY_EMAIL:-}
       RESEND_FROM: ${RESEND_FROM:-}

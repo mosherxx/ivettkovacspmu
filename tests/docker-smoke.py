@@ -43,7 +43,10 @@ date=day.isoformat();assert 540 in request('/api/booking?date='+date+'&service=c
 booking=dict(date=date,start=540,service='consult',name='Local Test',email='test@example.com',phone='+36123456789',consent=True,previousTreatment='no',previousDetails='',referral='',quotedPrice=10000,language='en')
 with concurrent.futures.ThreadPoolExecutor(max_workers=2) as pool:results=list(pool.map(lambda _:request('/api/booking',booking),range(2)))
 assert sorted(r[0] for r in results)==[200,409],results
-id=next(r[1]['id'] for r in results if r[0]==200)
+saved=next(r[1] for r in results if r[0]==200)
+id=saved['id'];assert saved['email']=='not_configured',saved
+pending=next(b for b in request('/api/admin')[1]['bookings'] if b['id']==id)
+assert pending['status']=='pending' and pending['email_state']=='queued',pending
 for state in ['confirmed','cancelled']:
  result=request('/api/admin',dict(action='status',id=id,status=state));assert result[0]==200,result
 assert 540 in request('/api/booking?date='+date+'&service=consult')[1]['slots']

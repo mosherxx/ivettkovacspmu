@@ -1,11 +1,11 @@
-FROM node:24-bookworm-slim AS builder
+FROM public.ecr.aws/docker/library/node:24-bookworm-slim AS builder
 WORKDIR /app
 COPY package.json package-lock.json .npmrc ./
 RUN npm ci
 COPY . .
 RUN npm run build:docker
 
-FROM node:24-bookworm-slim AS runner
+FROM public.ecr.aws/docker/library/node:24-bookworm-slim AS runner
 WORKDIR /app
 ENV NODE_ENV=production NEXT_TELEMETRY_DISABLED=1 HOSTNAME=0.0.0.0 PORT=3000 DATA_DIR=/data
 RUN mkdir /data && chown node:node /data
