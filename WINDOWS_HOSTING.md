@@ -39,6 +39,8 @@ The domain's authoritative DNS must be in Cloudflare. Preserve existing mail, SP
 
 The prepared Windows `cloudflared` service uses `http://127.0.0.1:3000` as the route's service URL, because it runs on the host. After changing the admin password and creating the route, run `scripts/install-tunnel-service.ps1` in an Administrator PowerShell window. It installs the verified Cloudflare binary as an automatic Windows service and starts it. No public inbound port is needed.
 
+If the public site fails with HTTP 530 after a restart and `Get-Service cloudflared` shows `Stopped`, open PowerShell as Administrator in this project directory and run `powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\scripts\repair-tunnel-service.ps1`. This refreshes the service token from the private `.env` file and starts the automatic service. Then check `Get-Service cloudflared` and the public website.
+
 The repository also has an optional containerized tunnel. If Docker Hub access is available, point its route to `http://web:3000` and start it with:
 
 ```powershell
