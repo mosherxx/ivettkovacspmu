@@ -2,6 +2,8 @@
 
 The provider already has GitHub access. This checklist covers the remaining access needed to operate the site. Keep actual passwords, API keys, recovery codes, and the production `.env` out of GitHub and ordinary support tickets. Give each person only the access they need; keep owner recovery access and MFA.
 
+Websupport does not supply a runtime token to the website; it controls domain registration and nameserver delegation. Cloudflare does require a tunnel token on the new host, but the provider can create a new one after receiving access to the owner's Cloudflare account. The provider can fill the other `.env` values with credentials it manages.
+
 ## Websupport (domain registrar)
 
 1. Identify the Websupport account that owns `ivettkovacspmu.hu` and `ivettkovacspmu.com`. Confirm both renewal dates, payment method, registrant contact, and account recovery method.
