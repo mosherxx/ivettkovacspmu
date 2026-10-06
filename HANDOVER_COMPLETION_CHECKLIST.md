@@ -8,8 +8,6 @@ The source, deployment guide, troubleshooting guide, and an encrypted database s
 - [ ] Arrange Websupport access for `ivettkovacspmu.hu` and `ivettkovacspmu.com`. Confirm renewal, billing, registrant details, and nameserver control. Websupport has no website runtime token.
 - [ ] Give the host Resend access, or agree that it will use its own Resend account and verify the sending domain. Agree who will handle mail delivery failures.
 - [ ] Transfer the website admin login through a password manager. Agree who controls the admin recovery inbox. Keep your own emergency recovery route.
-- [ ] Provide the encrypted backup's decryption key through a separate private channel. The key is local at `handover-package/BACKUP_DECRYPTION_KEY.txt`; it is not in GitHub.
-- [ ] Agree on a maintenance window, rollback window, on-call contact, ownership of credentials, and who may approve DNS changes.
 
 ## Hosting company: prepare the new service
 
@@ -17,7 +15,7 @@ The source, deployment guide, troubleshooting guide, and an encrypted database s
 - [ ] Provision the server and Docker, then deploy a reviewed source commit. Create a private `.env` from [provider.env.template](provider.env.template) using provider-managed credentials and `PUBLIC_ORIGIN=https://www.ivettkovacspmu.hu`.
 - [ ] Create a new Cloudflare tunnel in the owner's account. For a containerized tunnel, its service URL is `http://web:3000`. Preserve all existing email DNS records.
 - [ ] Decrypt the sample backup, verify its checksum, and perform a restore drill on a disposable volume. Confirm reservations, settings, admin access, and uploaded images. Do not publish a blank database with the one-time default admin login.
-- [ ] Configure automatic startup, external uptime checks, disk and backup monitoring, encrypted off-host backups, retention, and a tested restore procedure. Name the person to contact when an alert fires.
+- [ ] Configure automatic startup, external uptime checks, disk and backup monitoring, encrypted off-host backups, retention, and a tested restore procedure.
 
 ## Cutover and acceptance
 
