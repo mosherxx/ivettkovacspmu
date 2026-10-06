@@ -4,6 +4,7 @@ A bilingual permanent-makeup website with appointment requests, availability man
 
 ## Production deployment
 
+- [Final hosting handover checklist](HANDOVER_COMPLETION_CHECKLIST.md): remaining access, migration, testing, and sign-off.
 - [Technical deployment guide](DEPLOYMENT_TECHNICAL.md): architecture, deployment sequence, updates, security boundaries, recovery, and troubleshooting.
 - [Windows hosting checklist](WINDOWS_HOSTING.md): concise setup and routine operation for the production laptop.
 - [Self-hosting guide](SELF_HOSTING.md): application modes, persistent data, and validation.
